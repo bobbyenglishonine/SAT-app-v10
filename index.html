@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SAT Practice Variant 10</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-AMS_HTML"></script>
+  <script>
+    MathJax.Hub.Config({
+      tex2jax: { inlineMath: [["\\(","\\)"]], displayMath: [["\\[","\\]"]] },
+      "HTML-CSS": { scale: 100 }
+    });
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    #questionText, #review p { white-space: pre-wrap; }
+    .notes-list { list-style-type: disc; padding-left: 1.5em; margin: 0.5em 0; }
+  </style>
+</head>
+<body class="bg-slate-100 min-h-screen">
+
+<header class="bg-white shadow sticky top-0 z-10">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+    <h1 class="font-bold text-xl text-indigo-700">SAT Digital Practice / Variant 9 M1</h1>
+    <div class="flex items-center gap-4">
+      <button id="pauseBtn" class="hidden text-sm px-4 py-1 rounded-full bg-yellow-400 hover:bg-yellow-500 font-semibold transition">Pause</button>
+      <span id="timer" class="font-mono font-bold text-xl text-red-600 hidden">00:00</span>
+    </div>
+  </div>
+</header>
+
+<main class="max-w-6xl mx-auto p-4">
+
+<section id="screen-select" class="bg-white p-8 rounded-xl shadow-2xl">
+  <h2 class="text-3xl font-extrabold mb-6 text-indigo-800">Choose Section</h2>
+  <div class="grid md:grid-cols-2 gap-8">
+    <button data-section="RW" class="startBtn p-8 border-2 rounded-xl bg-indigo-100 text-indigo-800 hover:bg-indigo-200 transition duration-300 shadow-lg font-semibold text-lg">
+      <span class="rw-label"></span>
+      <p class="text-sm text-indigo-600 mt-1"><span class="rw-time"></span> Time Limit</p>
+    </button>
+    <button data-section="MATH" class="startBtn p-8 border-2 rounded-xl bg-green-100 text-green-800 hover:bg-green-200 transition duration-300 shadow-lg font-semibold text-lg">
+      <span class="math-label"></span>
+      <p class="text-sm text-green-600 mt-1"><span class="math-time"></span> Time Limit</p>
+    </button>
+  </div>
+</section>
+
+<section id="screen-question" class="hidden bg-white p-8 rounded-xl shadow-2xl">
+  <div class="flex flex-col sm:flex-row justify-between mb-4 pb-2 border-b gap-3">
+    <span id="qCounter" class="font-bold text-2xl text-indigo-700"></span>
+
+    <div class="flex items-center gap-3">
+      <span id="moduleLabel" class="text-sm text-slate-500"></span>
+      <button
+        id="exitBtn"
+        class="text-sm px-4 py-1 rounded-full bg-slate-200 hover:bg-slate-300 font-semibold transition"
+        type="button"
+      >
+        Exit to Main
+      </button>
+    </div>
+  </div>
+
+  <div id="questionText" class="mb-6 text-xl leading-relaxed"></div>
+  <div id="options" class="space-y-4"></div>
+  <div class="flex justify-between mt-8">
+    <button id="prevBtn" class="px-5 py-2 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 transition duration-200 font-semibold shadow-md disabled:opacity-50" disabled>Previous</button>
+    <button id="nextBtn" class="px-5 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition duration-200 font-semibold shadow-md">Next</button>
+  </div>
+</section>
+
+<section id="screen-result" class="hidden bg-white p-8 rounded-xl shadow-2xl">
+  <h2 class="text-3xl font-extrabold mb-4 text-green-600">Test Completed!</h2>
+  <div class="p-4 bg-green-50 rounded-lg mb-6 border border-green-200">
+      <p id="scoreSummary" class="text-2xl font-bold text-green-800"></p>
+      <p class="text-slate-600">Review your answers and explanations below.</p>
+  </div>
+  <div id="review" class="space-y-6"></div>
+
+  <button
+    id="exitBtnResult"
+    class="mt-6 px-6 py-3 bg-slate-200 text-slate-800 rounded-lg hover:bg-slate-300 transition font-semibold shadow-lg"
+    type="button"
+  >
+    Exit to Main Screen
+  </button>
+
+  <button onclick="location.reload()" class="mt-4 px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-semibold shadow-lg">Restart Practice</button>
+</section>
+
+</main>
+
+<script>
+
+/* ---------------- DATA: Questions ---------------- */
+const DATA = {
+  RW: {
+    time: 25 * 60,
+    modules: [
+      [
+        {
+          id: "1",
+          img: "",
+          q: "The following text is adapted from Lewis Carroll’s 1889 satirical novel <i>Sylvie and Bruno</i>.\n\nA crowd has gathered outside a room belonging to the Warden, an official who reports to the Lord Chancellor.\n\nOne man, who was more excited than the rest, flung his hat high into the air, and shouted (as well as I could make out) “Who roar for the Sub-Warden?” Everybody roared, but whether it was for the Sub-Warden, or not, did not clearly appear: some were shouting “Bread!” and some “Taxes!”, but no one seemed to know what it was they really wanted.\n\nAll this I saw from the open window of the Warden’s breakfast-saloon, looking across the shoulder of the Lord Chancellor.\n\n“What can it all mean?” he kept repeating to himself. “I never heard such shouting before—and at this time of the morning, too! And with such unanimity!”\n\nBased on the text, how does the Lord Chancellor respond to the crowd?",
+          options: {
+            A: "He asks about the meaning of the crowd’s shouting, even though he claims to know what the crowd wants.",
+            B: "He indicates a desire to speak to the crowd, even though the crowd has asked to speak to the Sub-Warden.",
+            C: "He expresses sympathy for the crowd’s demands, even though the crowd’s shouting annoys him.",
+            D: "He describes the crowd as being united, even though the crowd clearly appears otherwise."
+          },
+          correct: "D",
+          explain: "He calls the shouting “unanimity,” so he portrays the crowd as united even though their demands are different."
+        },
+        {
+          id: "2",
+          img: "m2q11.png",
+          q: "<b>Top Four Species of Wild Land Mammals by Global Biomass</b><br><br>Global biomass is the total mass of living material, such as animals and plants, on Earth. A team of scientists estimated the global biomass, by species, of various wild land mammals. The team found that the species with the highest global biomass is the ______.<br><br>Which choice most effectively uses data from the graph to complete the sentence?",
+          options: {
+            A: "wild boar.",
+            B: "eastern gray kangaroo.",
+            C: "African bush elephant.",
+            D: "white-tailed deer."
+          },
+          correct: "D",
+          explain: "On the bar graph, white-tailed deer have the tallest bar, so they have the highest global biomass among the four species."
+        },
+        {
+          id: "3",
+          img: "m2q12.png",
+          q: "<b>Number and Origin of Clamshell Tools Found at Different Levels Below the Surface in Neanderthal Cave</b><br><br>Studying tools unearthed at a cave site on the western coast of Italy, archaeologist Paola Villa and colleagues have determined that prehistoric Neanderthal groups fashioned them from shells of clams that they harvested from the seafloor while wading or diving or that washed up on the beach. Clamshells become thin and eroded as they wash up on the beach, while those on the seafloor are smooth and sturdy, so the research team suspects that Neanderthals prized the tools made with seafloor shells. However, the team also concluded that those tools were likely more challenging to obtain, noting that ______<br><br>Which choice most effectively uses data from the table to support the research team’s conclusion?",
+          options: {
+            A: "at each depth below the surface in the cave, the difference in the numbers of tools of each type suggests that shells were easier to collect from the beach than to harvest from the seafloor.",
+            B: "the highest number of tools were at a depth of 3–4 meters below the surface, which suggests that the Neanderthal population at the site was highest during the related period of time.",
+            C: "at each depth below the surface in the cave, the difference in the numbers of tools of each type suggests that Neanderthals preferred to use clamshells from the beach because of their durability.",
+            D: "the higher number of tools at depths of 5–6 meters below the surface in the cave than at depths of 4–5 meters below the surface suggests that the size of clam populations changed over time."
+          },
+          correct: "A",
+          explain: "At every depth, beach shells greatly outnumber seafloor shells, which fits the idea that seafloor shells—and tools made from them—were harder for Neanderthals to obtain."
+        },
+        {
+          id: "4",
+          img: "m2q13.png",
+          q: "<b>Power Conversion Efficiency of Lowest and Highest Performing Spin-coated and Spray-coated Electron Transport Layers</b><br><br>Perovskite solar cells convert light into electricity more efficiently than earlier kinds of solar cells, and manufacturing advances have recently made them commercially attractive. One limitation of the cells, however, has to do with their electron transport layer (ETL), through which absorbed electrons must pass. Often the ETL is applied through a process called spin coating, but such ETLs are fairly inefficient at converting input power to output power. André Taylor and colleagues tested a novel spray coating method for applying the ETL. The team produced ETLs of various thicknesses and concluded that spray coating holds promise for improving the power conversion efficiency of ETLs in perovskite solar cells.<br><br>Which choice best describes data from the graph that support Taylor and colleagues’ conclusion?",
+          options: {
+            A: "Both the ETL applied through spin coating and the ETL applied through spray coating showed a power conversion efficiency greater than 10% at their lowest performing thickness.",
+            B: "The lowest performing ETL applied through spray coating had a higher power conversion efficiency than the highest performing ETL applied through spin coating.",
+            C: "The highest performing ETL applied through spray coating showed a power conversion efficiency of approximately 13%, while the highest performing ETL applied through spin coating showed a power conversion efficiency of approximately 11%.",
+            D: "There was a substantial difference in power conversion efficiency between the lowest and highest performing ETLs applied through spray coating."
+          },
+          correct: "B",
+          explain: "From the graph, even the lowest-performing spray-coated ETL is more efficient than the best spin-coated ETL, which supports the conclusion that spray coating can improve ETL efficiency."
+        },
+        {
+  id: "5",
+  img: "m2q14.png",
+  q: "<b>Employment by Sector in France and the United States, 1800–2012 (% of total employment)</b><br><br>Over the past two hundred years, the percentage of the population employed in the agricultural sector has declined in both France and the United States, while employment in the service sector (which includes jobs in retail, consulting, real estate, etc.) has risen. However, this transition happened at very different rates in the two countries. This can be seen most clearly by comparing the employment by sector in both countries in ______.<br><br>Which choice most effectively uses data from the table to complete the statement?",
+  options: {
+    A: "1900 with the employment by sector in 1950.",
+    B: "1800 with the employment by sector in 2012.",
+    C: "1900 with the employment by sector in 2012.",
+    D: "1800 with the employment by sector in 1900."
+  },
+  correct: "A",
+  explain: "Between 1900 and 1950, both countries show a clear shift away from agriculture toward services and manufacturing, so comparing these two years best highlights how the transition rates differed."
+}, 
+// Q15
+{
+  id: "6",
+  img: "",
+  q: "The linguistic niche hypothesis (LNH) posits that the exotericity of languages (how prevalent non–native speakers are) and grammatical complexity are inversely related, which the LNH ascribes to attrition of complex grammatical rules as more non–native speakers adopt the language but fail to acquire those rules. Focusing on two characteristics that are positive indices of grammatical complexity, fusion (when new phonemes arise from the merger of previously distinct ones) and informativity (languages’ capacity for meaningful variation), Olena Shcherbakova and colleagues conducted a quantitative analysis for more than 1,300 languages and claim the outcome is inconsistent with the LNH.\n\nWhich finding, if true, would most directly support Shcherbakova and colleagues’ claim?",
+  options: {
+    A: "Shcherbakova and colleagues’ analysis showed a slightly negative correlation between grammatical complexity and fusion and between grammatical complexity and informativity.",
+    B: "Shcherbakova and colleagues’ analysis showed a slightly negative correlation between grammatical complexity and exotericity.",
+    C: "Shcherbakova and colleagues’ analysis showed a slightly positive correlation between grammatical complexity and fusion.",
+    D: "Shcherbakova and colleagues’ analysis showed a slightly positive correlation between fusion and exotericity and between informativity and exotericity."
+  },
+  correct: "D",
+  explain: "If more exoteric languages tend to have more fusion and informativity, then exotericity is associated with greater grammatical complexity, contradicting the LNH’s claim of an inverse relationship."
+},
+
+// Q16
+{
+  id: "7",
+  img: "",
+  q: "Archaeologist Christiana Kohler and her team excavated the Egyptian tomb of Queen Merneith, the wife of a First Dynasty pharaoh. Some scholars claim that she also ruled Egypt on her own and was actually the first female pharaoh. The team found a tablet in Merneith’s tomb with writing suggesting that she was in charge of the country’s treasury and other central offices. Whether Merneith was a pharaoh or not, this discovery supports the idea that Merneith likely ______.\n\nWhich choice most logically completes the text?",
+  options: {
+    A: "had an important role in Egypt’s government.",
+    B: "lived after rather than before the First Dynasty of Egypt.",
+    C: "traveled beyond Egypt’s borders often.",
+    D: "created a new form of writing in Egypt."
+  },
+  correct: "A",
+  explain: "Being in charge of the treasury and central offices shows significant governmental responsibility, so it most strongly supports the idea that she had an important role in Egypt’s government."
+},
+
+// Q17
+{
+  id: "8",
+  img: "",
+  q: "In a study of the cognitive abilities of white–faced capuchin monkeys (<i>Cebus imitator</i>), researchers neglected to control for the physical difficulty of the tasks they used to evaluate the monkeys. The cognitive abilities of monkeys given problems requiring little dexterity, such as sliding a panel to retrieve food, were judged by the same criteria as were those of monkeys given physically demanding problems, such as unscrewing a bottle and inserting a straw. The results of the study, therefore, ______.\n\nWhich choice most logically completes the text?",
+  options: {
+    A: "could suggest that there are differences in cognitive ability among the monkeys even though such differences may not actually exist.",
+    B: "are useful for identifying tasks that the monkeys lack the cognitive capacity to perform but not for identifying tasks that the monkeys can perform.",
+    C: "should not be taken as indicative of the cognitive abilities of any monkey species other than <i>C. imitator</i>.",
+    D: "reveal more about the monkeys’ cognitive abilities when solving artificial problems than when solving problems encountered in the wild."
+  },
+  correct: "A",
+  explain: "Because physical difficulty was not controlled, poorer performance on harder tasks might reflect motor limits rather than cognition, so any apparent cognitive differences may be misleading."
+},
+// Q18
+{
+  id: "9",
+  img: "",
+  q: "Public-awareness campaigns about the need to reduce single-use plastics can be successful, says researcher Kim Borg of Monash University in Australia, when these campaigns give consumers a choice: for example, Japan achieved a 40 percent reduction in plastic-bag use after cashiers were instructed to ask customers whether ______ wanted a bag.\n\nWhich choice completes the text so that it conforms to the conventions of Standard English?",
+  options: {
+    A: "they",
+    B: "one",
+    C: "you",
+    D: "it"
+  },
+  correct: "A",
+  explain: "The plural “customers” is best matched by the plural pronoun “they,” making the sentence grammatically consistent."
+},
+
+// Q19
+{
+  id: "10",
+  img: "",
+  q: "Lucía Michel of the University of Chile observed that alkaline soils contain an insoluble form of iron that blueberry plants cannot absorb, thus inhibiting blueberry growth. If these plants were grown in alkaline soil alongside grasses that aid in iron solubilization, ______ Michel was determined to find out.\n\nWhich choice completes the text so that it conforms to the conventions of Standard English?",
+  options: {
+    A: "could the blueberries thrive.",
+    B: "the blueberries could thrive.",
+    C: "the blueberries could thrive?",
+    D: "could the blueberries thrive?"
+  },
+  correct: "D",
+  explain: "The phrase continues an embedded question (“Michel was determined to find out could the blueberries thrive?”), which requires inverted word order and a question mark."
+},
+
+// Q20
+{
+  id: "11",
+  img: "",
+  q: "Atoms in a synchrotron, a type of circular particle accelerator, travel faster and faster until they ______ a desired energy level, at which point they are diverted to collide with a target, smashing the atoms.\n\nWhich choice completes the text so that it conforms to the conventions of Standard English?",
+  options: {
+    A: "will reach",
+    B: "reach",
+    C: "had reached",
+    D: "are reaching"
+  },
+  correct: "B",
+  explain: "The sentence uses a general present-tense description of how a synchrotron works, so the simple present “reach” fits the ongoing process."
+},
+
+// Q21
+{
+  id: "12",
+  img: "",
+  q: "In his 1963 exhibition <i>Exposition of Music—Electronic Television</i>, Korean American artist Nam June Paik showed how television images could be manipulated to express an artist’s perspective. Today, Paik ______ considered the first video artist.\n\nWhich choice completes the text so that it conforms to the conventions of Standard English?",
+  options: {
+    A: "will be",
+    B: "had been",
+    C: "was",
+    D: "is"
+  },
+  correct: "D",
+  explain: "The sentence contrasts a past exhibition with Paik’s current reputation, so the present-tense passive “is considered” is appropriate."
+},
+
+// Q22
+{
+  id: "13",
+  img: "",
+  q: "Former First Lady of the United States Eleanor Roosevelt and Indian activist and educator Hansa Mehta were instrumental in drafting the United Nations’ Universal Declaration of Human Rights, a document that ______ the basic freedoms to which all people are entitled.\n\nWhich choice completes the text so that it conforms to the conventions of Standard English?",
+  options: {
+    A: "have outlined",
+    B: "were outlining",
+    C: "outlines",
+    D: "outline"
+  },
+  correct: "C",
+  explain: "The subject is the singular noun “document,” so the singular verb “outlines” correctly maintains subject–verb agreement."
+},
+// Q23
+{
+  id: "14",
+  img: "",
+  q: "In February 1919, following the end of the First World War, women from ten countries around the world convened the Inter-Allied Women’s Conference in Paris. The conference’s goals were ______ ensure women’s participation in the proceedings of the Paris Peace Conference, to secure the right of women to serve in the League of Nations, and to advocate for human rights.\n\nWhich choice completes the text so that it conforms to the conventions of Standard English?",
+  options: {
+    A: "threefold: to",
+    B: "threefold. To",
+    C: "threefold to",
+    D: "threefold; to"
+  },
+  correct: "A",
+  explain: "“Threefold” labels the list of three goals, so it should be followed by a colon; “to” properly introduces the first infinitive in the series."
+},
+
+// Q24
+{
+  id: "15",
+  img: "",
+  q: "Mathematician Grigori Perelman, sometimes in conjunction with mathematicians Richard S. Hamilton and Shing-Tung Yau, ______ credited with proving the Poincaré conjecture. Having built on Hamilton’s previous work to solve the proof, Perelman has insisted that Hamilton receive credit. Yau later found and closed gaps in Perelman’s proof, persuading some mathematicians that he deserves credit as well.\n\nWhich choice completes the text so that it conforms to the conventions of Standard English?",
+  options: {
+    A: "are",
+    B: "have been",
+    C: "are being",
+    D: "is"
+  },
+  correct: "D",
+  explain: "The singular subject “Mathematician Grigori Perelman” requires the singular verb “is,” even though other mathematicians are mentioned in a modifying phrase."
+},
+
+// Q25
+{
+  id: "16",
+  img: "",
+  q: "Researchers studying magnetosensation have determined why some soil-dwelling roundworms in the Southern Hemisphere move in the opposite direction of Earth’s magnetic field when searching for ______s in the Northern Hemisphere, the magnetic field points down, into the ground, but in the Southern Hemisphere, it points up, toward the surface and away from worms’ food sources.\n\nWhich choice completes the text so that it conforms to the conventions of Standard English?",
+  options: {
+    A: "food:",
+    B: "food,",
+    C: "food while",
+    D: "food"
+  },
+  correct: "A",
+  explain: "The clause after the blank explains why the behavior occurs, so a colon is needed after “food” to introduce that explanation."
+},
+
+// Q26
+{
+  id: "17",
+  img: "",
+  q: "Most conifers (trees belonging to the phylum Coniferophyta) are evergreen. That is, they keep their green leaves or needles year-round. However, not all conifer species are evergreen. Larch trees, ______ lose their needles every fall.\n\nWhich choice completes the text with the most logical transition?",
+  options: {
+    A: "for instance,",
+    B: "nevertheless,",
+    C: "meanwhile,",
+    D: "in addition,"
+  },
+  correct: "A",
+  explain: "Larch trees are a specific example of conifers that are not evergreen, so “for instance” logically introduces them as an illustrative case."
+},
+// Q27
+{
+  id: "18",
+  img: "",
+  q: "Neuroscientist Karen Konkoly wanted to determine whether individuals can understand and respond to questions during REM sleep. She first taught volunteers eye movements they would use to respond to basic math problems while asleep (a single left–right eye movement indicated the number one). ______ she attached electrodes to the volunteers’ faces to record their eye movements during sleep.\n\nWhich choice completes the text with the most logical transition?",
+  options: {
+    A: "Specifically,",
+    B: "Next,",
+    C: "For instance,",
+    D: "In sum,"
+  },
+  correct: "B",
+  explain: "The sentence describes the following step in a procedure, so “Next,” clearly signals the sequence of actions."
+},
+
+// Q28
+{
+  id: "19",
+  img: "",
+  q: "In his 1925 book <i>The Morphology of Landscape</i>, US geographer Carl Sauer challenged prevailing views about how natural landscapes influence human cultures. ______ Sauer argued that instead of being shaped entirely by their natural surroundings, cultures play an active role in their own development by virtue of their interactions with the environment.\n\nWhich choice completes the text with the most logical transition?",
+  options: {
+    A: "Similarly,",
+    B: "Finally,",
+    C: "Therefore,",
+    D: "Specifically,"
+  },
+  correct: "D",
+  explain: "The second sentence gives a concrete statement of Sauer’s view that elaborates on the challenge mentioned before, so “Specifically,” is the most appropriate transition."
+},
+
+// Q29
+{
+  id: "20",
+  img: "",
+  q: "In her 2012 analysis of tree rings from Japan’s Yaku Island, cosmic ray physicist Fusa Miyake noted an anomalous carbon-14 spike dating to 774–775 CE, indicating that a massive burst of radiation reached Earth during that time. ______ this unprecedented radiocarbon surge was dubbed a “Miyake event” in honor of its discoverer.\n\nWhich choice completes the text with the most logical transition?",
+  options: {
+    A: "Fittingly,",
+    B: "Similarly,",
+    C: "However,",
+    D: "In other words,"
+  },
+  correct: "A",
+  explain: "Naming the event after Miyake is an appropriate consequence of her discovery, so “Fittingly,” best connects the discovery to the honor."
+},
+// Q30
+{
+  id: "21",
+  img: "",
+  q: "Researchers Helena Mihaljević-Brandt, Lucía Santamaría, and Marco Tullney report that while mathematicians may have traditionally worked alone, evidence points to a shift in the opposite direction. ______ mathematicians are choosing to collaborate with their peers—a trend illustrated by a rise in the number of mathematics publications credited to multiple authors.\n\nWhich choice completes the text with the most logical transition?",
+  options: {
+    A: "Similarly,",
+    B: "For this reason,",
+    C: "Furthermore,",
+    D: "Increasingly,"
+  },
+  correct: "D",
+  explain: "The sentence describes a growing trend toward collaboration, so “Increasingly,” most clearly introduces that ongoing change."
+},
+
+// Q31
+{
+  id: "22",
+  img: "",
+  q: "While researching a topic, a student has taken the following notes:\n\n• Shaun Tan is an Australian author.\n• In 2008, he published <i>Tales from Outer Suburbia</i>, a book of fifteen short stories.\n• The stories describe surreal events occurring in otherwise ordinary suburban neighborhoods.\n• In 2018, he published <i>Tales from the Inner City</i>, a book of twenty-five short stories.\n• The stories describe surreal events occurring in otherwise ordinary urban settings.\n\nThe student wants to emphasize a similarity between the two books by Shaun Tan. Which choice most effectively uses relevant information from the notes to accomplish this goal?",
+  options: {
+    A: "<i>Tales from Outer Suburbia</i>, which describes surreal events occurring in otherwise ordinary places, contains fewer short stories than <i>Tales from the Inner City</i> does.",
+    B: "<i>Tales from Outer Suburbia</i> was published in 2008, and <i>Tales from the Inner City</i> was published in 2018.",
+    C: "Unlike <i>Tales from the Inner City</i>, Shaun Tan’s book <i>Tales from Outer Suburbia</i> is set in suburban neighborhoods.",
+    D: "Shaun Tan’s books <i>Tales from Outer Suburbia</i> and <i>Tales from the Inner City</i> both describe surreal events occurring in otherwise ordinary places."
+  },
+  correct: "D",
+  explain: "Both note sets mention surreal events in otherwise ordinary settings, so stating that both books share this feature highlights their key similarity."
+},
+// Q32
+{
+  id: "23",
+  img: "",
+  q: "While researching a topic, a student has taken the following notes:\n\n• Started in 1925, the Scripps National Spelling Bee is a US-based spelling competition.\n• The words used in the competition have diverse linguistic origins.\n• In 2008, Sameer Mishra won by correctly spelling the word “guerdon.”\n• “Guerdon” derives from the Anglo-French word “guerdun.”\n• In 2009, Kavya Shivashankar won by correctly spelling the word “Laodicean.”\n• “Laodicean” derives from the ancient Greek word “Laodikeia.”\n\nThe student wants to emphasize a difference in the origins of the two words. Which choice most effectively uses relevant information from the notes to accomplish this goal?",
+  options: {
+    A: "“Guerdon,” the final word of the 2008 Scripps National Spelling Bee, is of Anglo-French origin, while the following year’s final word, “Laodicean,” derives from ancient Greek.",
+    B: "In 2008, Sameer Mishra won the Scripps National Spelling Bee by correctly spelling the word “guerdon”; however, the following year, Kavya Shivashankar won based on spelling the word “Laodicean.”",
+    C: "Kavya Shivashankar won the 2009 Scripps National Spelling Bee by correctly spelling “Laodicean,” which derives from the ancient Greek word “Laodikeia.”",
+    D: "The Scripps National Spelling Bee uses words from diverse linguistic origins, such as “guerdon” and “Laodicean.”"
+  },
+  correct: "A",
+  explain: "This option directly contrasts the two words’ different language origins—Anglo-French versus ancient Greek—which is the difference the student wants to highlight."
+},
+
+// Q33
+{
+  id: "24",
+  img: "",
+  q: "While researching a topic, a student has taken the following notes:\n\n• In 1851, German American artist Emanuel Leutze painted <i>Washington Crossing the Delaware</i>.\n• His huge painting (149 × 255 inches) depicts the first US president crossing a river with soldiers in the Revolutionary War.\n• In 2019, Cree artist Kent Monkman painted <i>mistikôsiwak (Wooden Boat People): Resurgence of the People</i>.\n• Monkman’s huge painting (132 × 264 inches) was inspired by Leutze’s.\n• It portrays Indigenous people in a boat rescuing refugees.\n\nThe student wants to emphasize a similarity between the two paintings. Which choice most effectively uses relevant information from the notes to accomplish this goal?",
+  options: {
+    A: "Monkman, a Cree artist, finished his painting in 2019; Leutze, a German American artist, completed his in 1851.",
+    B: "Although Monkman’s painting was inspired by Leutze’s, the people and actions the two paintings portray are very different.",
+    C: "Leutze’s and Monkman’s paintings are both huge, measuring 149 × 255 inches and 132 × 264 inches, respectively.",
+    D: "Leutze’s painting depicts Revolutionary War soldiers, while Monkman’s depicts Indigenous people and refugees."
+  },
+  correct: "C",
+  explain: "Option C points out that both works are very large paintings, which directly states a similarity drawn from the notes."
+}
+
+
+
+
+
+      ]
+    ]
+  },
+
+  MATH: {
+    time: 15 * 60,
+    modules: [
+      [
+        { id: "M1",  img: "", q: "The line graph shows the percent of cars for sale at a used car lot on a given day by model year.<br><br>For what model year is the percent of cars for sale the smallest?", options: { A: "2012", B: "2013", C: "2014", D: "2015" }, correct: "B", explain: "From the graph, 2013 has the lowest percent." },
+        { id: "M2",  img: "", q: "The graph of a system of linear equations is shown. What is the solution \\((x, y)\\) to the system?", options: { A: "(4, -5)", B: "(0, 3)", C: "(0, -2)", D: "(-2, 3)" }, correct: "B", explain: "The lines intersect at (0, 3)." },
+        { id: "M3",  img: "", q: "The total cost, in dollars, to rent a surfboard consists of a $25 service fee and a $10 per hour rental fee. A person rents a surfboard for \\(t\\) hours and intends to spend a maximum of $75 to rent the surfboard. Which inequality represents this situation?", options: { A: "\\(10t \\leq 75\\)", B: "\\(10 + 25t \\leq 75\\)", C: "\\(25t \\leq 75\\)", D: "\\(25 + 10t \\leq 75\\)" }, correct: "D", explain: "Total cost is \\(25 + 10t \\leq 75\\)." },
+        { id: "M4",  img: "", q: "An object's speed is 64 yards per second. What is the object's speed, in feet per second? (1 yard = 3 feet)", options: { A: "61", B: "67", C: "94", D: "192" }, correct: "D", explain: "64 × 3 = 192." },
+        { id: "M5",  img: "", q: "The scatterplot shows the relationship between two variables, x and y. A line of best fit is also shown.<br><br>Which of the following equations best represents the line of best fit shown?", options: { A: "\\(y = x + 3.4\\)", B: "\\(y = x - 3.4\\)", C: "\\(y = -x + 3.4\\)", D: "\\(y = -x - 3.4\\)" }, correct: "C", explain: "The line has negative slope and y-intercept 3.4." },
+        { id: "M6",  img: "", q: "The graph shows the linear relationship between x and y. Which table gives three values of x and their corresponding values of y for this relationship?", options: { A: "x=0 y=0; x=1 y=-7; x=2 y=-9", B: "x=0 y=0; x=1 y=-3; x=2 y=-1", C: "x=0 y=-5; x=1 y=-7; x=2 y=-9", D: "x=0 y=-5; x=1 y=-3; x=2 y=-1" }, correct: "C", explain: "Matches the graph's points." },
+        { id: "M7",  img: "", q: "What is the perimeter, in inches, of a rectangle with a length of 4 inches and a width of 9 inches?", options: { A: "13", B: "17", C: "22", D: "26" }, correct: "D", explain: "2(4 + 9) = 26." },
+        { id: "M8",  img: "", q: "\\(7m = 2(n + p)\\)<br>The given equation relates the positive numbers m, n, and p. Which equation correctly gives m in terms of n and p?", options: { A: "\\(m = \\frac{2(n + p)}{7}\\)", B: "\\(m = 2(n + p)\\)", C: "\\(m = 2(n + p) - 7\\)", D: "\\(m = 2 - n - p - 7\\)" }, correct: "A", explain: "Solve for m by dividing both sides by 7." },
+
+        { id: "M9",  img: "", q: "73, 74, 75, 77, 79, 82, 84, 85, 91<br>What is the median of the data shown?", options: { A: "77", B: "79", C: "82", D: "84" }, correct: "B", explain: "Middle value of sorted list is 79." },
+        { id: "M10", img: "", q: "The function f is defined by \\(f(x) = 4x\\). For what value of x does \\(f(x) = 8\\)?", options: { A: "1", B: "2", C: "3", D: "4" }, correct: "B", explain: "4x = 8, x = 2." },
+        { id: "M11", img: "", q: "Of 300,000 paper clips, 234,000 are size large. What percentage of the paper clips are size large?", options: { A: "22%", B: "33%", C: "66%", D: "78%" }, correct: "D", explain: "234000 / 300000 = 0.78 = 78%." },
+        { id: "M12", img: "", q: "\\(f(x) = 8x + 4\\)<br>The function f gives the estimated height, in feet, of a willow tree x years after its height was first measured. Which statement is the best interpretation of 4 in this context?", options: { A: "The tree will be measured each year for 4 years.", B: "The tree is estimated to grow to a maximum height of 4 feet.", C: "The estimated height of the tree increased by 4 feet each year.", D: "The estimated height of the tree was 4 feet when it was first measured." }, correct: "D", explain: "The constant term 4 is the initial height." },
+        { id: "M13", img: "", q: "If \\(4x + 7 = 23\\), what is the value of \\(x + 2\\)?", options: { A: "4", B: "6", C: "7", D: "8" }, correct: "B", explain: "First, solve for \\(x\\): \\(4x = 16\\), so \\(x = 4\\). Then, \\(x + 2 = 6\\)." },
+        { id: "M14", img: "", q: "A line passes through the points \\((1, 5)\\) and \\((3, 11)\\). What is the equation of the line?", options: { A: "\\(y = 3x + 2\\)", B: "\\(y = 2x + 3\\)", C: "\\(y = 4x + 1\\)", D: "\\(y = 3x - 1\\)" }, correct: "A", explain: "Slope is 3; using (1,5) gives \\(y = 3x + 2\\)." },
+        { id: "M15", img: "", q: "If \\(y = x^2 - 4x + 3\\), what is the minimum value of y?", options: { A: "-1", B: "0", C: "1", D: "3" }, correct: "A", explain: "Vertex at x=2, so y(2) = -1." }
+      ]
+    ]
+  }
+};
+
+/* ---------------- UTILS ---------------- */
+function qs(id){ return document.getElementById(id); }
+function qsa(s){ return document.querySelectorAll(s); }
+function show(s){
+  Object.values(screens).forEach(x => x.classList.add('hidden'));
+  screens[s].classList.remove('hidden');
+}
+function key(){ return `${section}-${currentModule * 100 + index}`; }
+function format(t){ return `${String(Math.floor(t/60)).padStart(2,'0')}:${String(t%60).padStart(2,'0')}`; }
+
+/* ---------------- STATE & ELEMENTS ---------------- */
+let section, currentModule = 0, index = 0, answers = {}, timeLeft, timerId = null, paused = false;
+
+const screens = { select: qs('screen-select'), q: qs('screen-question'), r: qs('screen-result') };
+const timerEl = qs('timer'), pauseBtn = qs('pauseBtn');
+const nextBtn = qs('nextBtn'), prevBtn = qs('prevBtn');
+const exitBtn = qs('exitBtn');
+const exitBtnResult = qs('exitBtnResult');
+
+/* ---------------- INIT ---------------- */
+qsa('.startBtn').forEach(b => b.onclick = () => start(b.dataset.section));
+nextBtn.onclick = () => nav(1);
+prevBtn.onclick = () => nav(-1);
+pauseBtn.onclick = togglePause;
+
+if (exitBtn) exitBtn.onclick = exitToMain;
+if (exitBtnResult) exitBtnResult.onclick = exitToMain;
+
+
+function initMenu() {
+  const sections = {
+    RW:   { labelSel: '.rw-label',   timeSel: '.rw-time',   name: 'Reading & Writing' },
+    MATH: { labelSel: '.math-label', timeSel: '.math-time', name: 'Math' }
+  };
+
+  Object.entries(sections).forEach(([key, cfg]) => {
+    const totalQ   = DATA[key].modules.reduce((sum, m) => sum + m.length, 0);
+    const totalSec = calcTime(key);
+    const mins     = Math.floor(totalSec / 60);
+    const secs     = String(totalSec % 60).padStart(2, '0');
+
+    document.querySelector(cfg.labelSel).textContent =
+      `${cfg.name} (${totalQ} Question${totalQ !== 1 ? 's' : ''})`;
+    document.querySelector(cfg.timeSel).textContent =
+      `${mins}:${secs}`;
+  });
+}
+
+initMenu();
+
+/* ---------------- APP LOGIC ---------------- */
+
+/*--TIMER--*/
+
+function calcTime(sec) {
+  const totalQ = DATA[sec].modules.reduce((sum, m) => sum + m.length, 0);
+  return totalQ * 60; // 1 minute per question
+}
+
+
+function start(sec){
+  stopTimer();
+
+  section = sec; currentModule = 0; index = 0; answers = {};
+  paused = false;
+  pauseBtn.textContent = 'Pause';
+  pauseBtn.classList.add('bg-yellow-400');
+  pauseBtn.classList.remove('bg-green-400');
+
+  timeLeft = calcTime(section);
+  show('q');
+  startTimer();
+  render();
+}
+
+function render(){
+  const moduleQuestions = DATA[section].modules[currentModule];
+  const q = moduleQuestions[index];
+
+  const totalInSection = DATA[section].modules.reduce((sum, m) => sum + m.length, 0);
+  const prevModulesCount = DATA[section].modules.slice(0, currentModule).reduce((sum, m) => sum + m.length, 0);
+  const overallIndex = prevModulesCount + index + 1;
+
+  qs('qCounter').textContent = `Q ${overallIndex} of ${totalInSection}`;
+
+  const sectionLabel = section === 'MATH' ? 'Math' : 'Reading & Writing';
+  qs('moduleLabel').textContent = `${sectionLabel} Module ${currentModule + 1}`;
+
+  let html = "";
+  if (q.img) {
+    html += `<img src="${q.img}" alt="Question ${q.id} image"
+      class="h-auto border rounded-lg shadow-sm mb-4"
+      style="max-width:65%; max-height:65%;"
+    />`;
+  }
+  html += q.q;
+  qs('questionText').innerHTML = html;
+
+  const currentAnswer = answers[key()];
+
+  prevBtn.disabled = (currentModule === 0 && index === 0);
+  const isLastInModule = index === moduleQuestions.length - 1;
+  const isLastModule = currentModule === DATA[section].modules.length - 1;
+  nextBtn.textContent = (isLastModule && isLastInModule) ? 'Finish Section' : 'Next';
+  nextBtn.disabled = !currentAnswer;
+
+  const o = qs('options'); o.innerHTML = '';
+
+  if (q.options) {
+    Object.entries(q.options).forEach(([k, v]) => {
+      const btn = document.createElement('button');
+      btn.className = `w-full text-left p-4 border-2 rounded-lg shadow-sm transition text-xl leading-relaxed ${
+        currentAnswer === k
+          ? 'bg-indigo-600 text-white border-indigo-700 shadow-md'
+          : 'bg-yellow-50 hover:bg-yellow-100 border-yellow-200'
+      }`;
+      btn.innerHTML = `${k}. ${v}`;
+      btn.onclick = () => {
+        answers[key()] = k;
+        render();
+      };
+      o.appendChild(btn);
+    });
+  } else {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'mt-2';
+    const label = document.createElement('p');
+    label.className = 'text-slate-500 text-base mb-2';
+    label.textContent = 'Enter your answer:';
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = 'Type your answer here';
+    input.value = currentAnswer || '';
+    input.className = 'w-full p-4 border-2 rounded-lg text-xl focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200';
+    input.oninput = () => {
+      const val = input.value.trim();
+      answers[key()] = val;
+      nextBtn.disabled = !val;
+    };
+    wrapper.appendChild(label);
+    wrapper.appendChild(input);
+    o.appendChild(wrapper);
+  }
+
+  MathJax.Hub.Queue(["Typeset", MathJax.Hub, qs('questionText')]);
+  MathJax.Hub.Queue(["Typeset", MathJax.Hub, o]);
+}
+
+function nav(dir){
+  const totalQuestionsInModule = DATA[section].modules[currentModule].length;
+  const totalModules = DATA[section].modules.length;
+
+  index += dir;
+
+  if (dir === 1 && index >= totalQuestionsInModule) {
+    if (currentModule < totalModules - 1) {
+      currentModule++;
+      index = 0;
+    } else {
+      return finish();
+    }
+  } else if (dir === -1 && index < 0) {
+    if (currentModule > 0) {
+      currentModule--;
+      index = DATA[section].modules[currentModule].length - 1;
+    } else {
+      index = 0;
+    }
+  }
+  render();
+}
+
+function finish(){
+  stopTimer();
+  show('r');
+  review();
+}
+
+function exitToMain(){
+  stopTimer();
+
+  section = null;
+  currentModule = 0;
+  index = 0;
+  answers = {};
+  timeLeft = 0;
+  paused = false;
+
+  timerEl.classList.add('hidden');
+  pauseBtn.classList.add('hidden');
+  pauseBtn.textContent = 'Pause';
+  pauseBtn.classList.add('bg-yellow-400');
+  pauseBtn.classList.remove('bg-green-400');
+
+  timerEl.classList.remove('text-red-800', 'animate-pulse');
+  timerEl.classList.add('text-red-600');
+
+  show('select');
+}
+
+function review(){
+  let correct = 0, total = 0;
+  const box = qs('review'); box.innerHTML = '';
+  let qIndex = 0;
+
+  DATA[section].modules.forEach((moduleQuestions, moduleIdx) => {
+    moduleQuestions.forEach((q, indexInModule) => {
+      total++;
+      const complexKey = `${section}-${moduleIdx * 100 + indexInModule}`;
+      const a = answers[complexKey] || null;
+      const isFreeResponse = !q.options;
+
+      let ok;
+      if (isFreeResponse) {
+        ok = a !== null && String(a).trim().toLowerCase() === String(q.correct).trim().toLowerCase();
+      } else {
+        ok = a === q.correct;
+      }
+      if (ok) correct++;
+
+      const yourAnswerText = a
+        ? (isFreeResponse ? a : `${a}. ${q.options[a]}`)
+        : "Unanswered";
+      const correctAnswerText = isFreeResponse
+        ? `${q.correct}`
+        : `${q.correct}. ${q.options[q.correct]}`;
+
+      box.innerHTML += `
+        <div class="border-2 p-4 rounded-lg shadow-sm ${ok ? 'bg-green-50 border-green-300' : 'bg-red-50 border-red-300'}">
+          <p class="font-medium text-xl mb-5">Q${qIndex + 1}: ${q.q}</p>
+          <p class="text-xl text-slate-700">Your Answer: <span class="font-semibold">${yourAnswerText}</span></p>
+          <p class="text-xl text-green-700">Correct Answer: <span class="font-semibold">${correctAnswerText}</span></p>
+          <div class="mt-3 pt-3 border-t border-slate-200">
+            <p class="text-xl text-slate-500 font-semibold">Explanation:</p>
+            <p class="text-xl italic leading-relaxed">${q.explain}</p>
+          </div>
+        </div>`;
+      qIndex++;
+    });
+  });
+
+  qs('scoreSummary').textContent = `Final Score: ${correct} / ${total} Correct`;
+
+  MathJax.Hub.Queue(["Typeset", MathJax.Hub, box]);
+}
+
+function startTimer(){
+  timerEl.classList.remove('hidden');
+  pauseBtn.classList.remove('hidden');
+  timerEl.textContent = format(timeLeft);
+
+  stopTimer();
+
+  timerId = setInterval(() => {
+    if (paused) return;
+    timeLeft--;
+    timerEl.textContent = format(timeLeft);
+    if (timeLeft <= 60) {
+      timerEl.classList.add('text-red-800', 'animate-pulse');
+    } else {
+      timerEl.classList.remove('text-red-800', 'animate-pulse');
+    }
+    if (timeLeft <= 0) finish();
+  }, 1000);
+}
+
+function stopTimer(){
+  if (timerId) clearInterval(timerId);
+  timerId = null;
+}
+
+function togglePause(){
+  paused = !paused;
+  pauseBtn.textContent = paused ? 'Resume' : 'Pause';
+  pauseBtn.classList.toggle('bg-yellow-400', !paused);
+  pauseBtn.classList.toggle('bg-green-400', paused);
+}
+
+show('select');
+
+</script>
+</body>
+</html>
